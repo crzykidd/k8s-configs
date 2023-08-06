@@ -2,6 +2,8 @@
 I am moving things over from docker compose to k8s.  Starting with a k3s cluster running traefik and cloudflared for ingress and longhorn for storage.
 
 ## Things I have installed so far.
+Sysdig https://sysdig.com  - used for monitoring and security
+
 ### scripts directory
 This will be any scripts I use for backup, etc. 
 
