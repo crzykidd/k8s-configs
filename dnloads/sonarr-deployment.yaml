@@ -40,10 +40,7 @@ spec:
           mountPath: /config
         - name: sonarr-fs02-media
           mountPath: /mnt/fs02-media  
-        #- name: sonarr-downloads
-        #  mountPath: /download
-        #- name: sonarr-lib
-        #  mountPath: /mnt/fileserv/Library/Videos/TV
+
       volumes:
         - name: "sonarr-data"
           persistentVolumeClaim:
@@ -53,15 +50,6 @@ spec:
             server: 192.168.55.22
             path: /volume1/media
 
-      #- name: sonarr
-      #  hostPath:
-      #    path: /mnt/fileserv/kubernetes/sonarr
-      #- name: sonarr-downloads
-      #  hostPath:
-      #    path: /mnt/fileserv/Library
-      #- name: sonarr-lib
-      #  hostPath:
-      #    path: /mnt/fileserv/Library/Videos/TV
 ---
 apiVersion: v1
 kind: Service
