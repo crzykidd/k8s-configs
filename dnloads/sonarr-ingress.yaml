@@ -9,7 +9,7 @@ spec:
   entryPoints:
     - web
   routes:
-  - match: Host(`sonarr02.home.arpa`) || Host(`ar-sonarr.crzynet.com`)
+  - match: Host(`sonarr.home.arpa`) || Host(`ar-sonarr.crzynet.com`)
     kind: Rule
     services:
       - name: sonarr-ui
