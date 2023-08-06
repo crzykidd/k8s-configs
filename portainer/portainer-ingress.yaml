@@ -1,0 +1,15 @@
+kind: IngressRoute
+apiVersion: traefik.containo.us/v1alpha1
+metadata:
+  name: portainer-web-ui
+  namespace: portainer
+
+spec:
+  entryPoints: 
+    - web
+  routes:
+  - match: Host(`portainer.home.arpa`) 
+    kind: Rule
+    services:
+    - name: portainer-ui
+      port: 9000
