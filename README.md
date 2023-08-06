@@ -5,7 +5,7 @@ I am moving things over from docker compose to k8s.  Starting with a k3s cluster
 ### scripts directory
 This will be any scripts I use for backup, etc. 
 
-backuppods.sh - script to backup pod contents using kubectl cp
+*backuppods.sh* - script to backup pod contents using kubectl cp
 
 ### portainer directory
 Everyone needs portainer
