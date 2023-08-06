@@ -1,0 +1,17 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: radarr-web-ui
+  namespace: dnloads
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`radarr.home.arpa`) || Host(`ar-radarr.crzynet.com`)
+    kind: Rule
+    services:
+      - name: radarr-ui
+        port: 7878 
+
+

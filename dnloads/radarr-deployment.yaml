@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: radarr
+  namespace: dnloads #added
+  labels:
+    app: radarr-ui
+    app.kubernetes.io/name: radarr
+    app.kubernetes.io/part-of: dnloads  
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: radarr
+      app.kubernetes.io/part-of: dnloads
+
+  template:
+    metadata:
+      labels:
+        app: radarr-ui
+        app.kubernetes.io/name: radarr
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: radarr
+        image: linuxserver/radarr
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 7878
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: radarr-data
+          mountPath: /config
+        - name: radarr-fs02-media
+          mountPath: /mnt/fs02-media  
+        - name: radarr-tnas01-media
+          mountPath: /mnt/tnas01-media
+
+      volumes:
+        - name: "radarr-data"
+          persistentVolumeClaim:
+            claimName: radarr-data-pvc
+        - name: radarr-fs02-media
+          nfs:
+            server: 192.168.55.22
+            path: /volume1/media
+        - name: radarr-tnas01-media
+          nfs:
+            server: 192.168.55.24
+            path: /mnt/Raid01/media
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: radarr-ui
+  namespace: dnloads
+  labels:
+    app: radarr-ui
+spec:
+  selector:
+    app: radarr-ui
+  ports:
+  - port: 7878
+    protocol: TCP
+    targetPort: 7878
+    name: web
