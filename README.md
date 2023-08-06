@@ -16,4 +16,8 @@ portainer-pvc.yaml is the volume claim to get a volume allocated from longhorn
 ### dnloads directory
 Here I will have things like Cloudflare tunnel, sonarr, radarr, etc.
 
+Using the NFS mount within the container for all data access, video files, etc.  
+
+Using Longhorn for all config folders.   have snapshots with longhorn configured as well as backup to NFS share.
+
 
