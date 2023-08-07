@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: syncthing
+  namespace: dnloads #added
+  labels:
+    app: syncthing
+    app.kubernetes.io/name: syncthing
+    app.kubernetes.io/part-of: dnloads  
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: syncthing
+      app.kubernetes.io/part-of: dnloads
+
+  template:
+    metadata:
+      labels:
+        app: syncthing
+        app.kubernetes.io/name: syncthing
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: syncthing
+        image: lscr.io/linuxserver/syncthing:latest
+        imagePullPolicy: Always
+        ports:
+        - name: web-ui
+          containerPort: 8384
+        - name: sycnthing-tcp
+          containerPort: 32222
+          protocol: TCP
+        - name: syncthing-udp
+          containerPort: 32222
+          protocol: UDP
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: syncthing-data
+          mountPath: /config
+        - name: syncthing-fs02-media
+          mountPath: /mnt/fs02-media  
+        
+      volumes:
+        - name: "syncthing-data"
+          persistentVolumeClaim:
+            claimName: syncthing-data-pvc
+        - name: syncthing-fs02-media
+          nfs:
+            server: 192.168.55.22
+            path: /volume1/media
+        
+
+
+---
+# link for traefik ingress
+apiVersion: v1
+kind: Service
+metadata:
+  name: syncthing
+  namespace: dnloads
+  labels:
+    app: syncthing
+spec:
+  selector:
+    app: syncthing
+  ports:
+  - port: 8384
+    protocol: TCP
+    targetPort: 8384
+    name: web
+
+---
+# link for NodePort
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: syncthing-np
+#  namespace: dnloads
+#  labels:
+#    app: syncthing-np
+#spec:
+#  selector:
+#    app: syncthing-np
+#  ports:
+#  - port: 32222
+#    protocol: TCP
+#    targetPort: 32222
+#    name: tcp-edge
+#  - port: 32222
+#    protocol: UDP
+#    targetPort: 32222
+#    name: udp-edge    
