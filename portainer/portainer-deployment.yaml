@@ -84,7 +84,7 @@ spec:
             claimName: portainer-pvc
       containers:
         - name: portainer
-          image: "portainer/portainer-ce"
+          image: "portainer/portainer-ce:latest"
           imagePullPolicy: Always
           args:          
           volumeMounts:
