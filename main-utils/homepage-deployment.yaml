@@ -5,6 +5,11 @@ metadata:
   namespace: default
   labels:
     app.kubernetes.io/name: homepage
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
 spec:
   revisionHistoryLimit: 3
   replicas: 1
@@ -42,7 +47,7 @@ spec:
         - name: homepage-config
           nfs:
             server: 192.168.55.21
-            path: /volume1/k8s-configs/data/main-utils/homepage
+            path: /volume1/k8s-configs/data/main-utils/homepage-config
 #        - name: config-volume
 #          configMap:
 #            name: homepage

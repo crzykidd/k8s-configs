@@ -7,6 +7,11 @@ metadata:
     app: radarr-ui
     app.kubernetes.io/name: radarr
     app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
 spec:
   replicas: 1
   strategy:
@@ -25,7 +30,7 @@ spec:
     spec:
       containers:
       - name: radarr
-        image: linuxserver/radarr
+        image: lscr.io/linuxserver/radarr:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 7878

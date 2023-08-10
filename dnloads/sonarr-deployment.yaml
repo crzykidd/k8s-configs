@@ -8,6 +8,11 @@ metadata:
     app: sonarr-ui
     app.kubernetes.io/name: sonarr
     app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
 spec:
   replicas: 1
   strategy:
@@ -26,7 +31,7 @@ spec:
     spec:
       containers:
       - name: sonarr
-        image: linuxserver/sonarr
+        image: lscr.io/linuxserver/sonarr:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8989

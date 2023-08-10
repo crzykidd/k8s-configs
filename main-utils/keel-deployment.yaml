@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: keel
+  namespace: keel
+  labels:
+    app: keel
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keel
+  template:
+    metadata:
+      labels:
+        app: keel
+    spec:
+      serviceAccountName: keel
+      containers:
+        - name: keel
+          # Note that we use appVersion to get images tag.
+          image: keelhq/keel
+          imagePullPolicy: Always
+          command: ["/bin/keel"]
+          env:
+          - name: BASIC_AUTH_USER
+            value: admin
+          - name: BASIC_AUTH_PASSWORD
+            value: admin
+          - name: AUTHENTICATED_WEBHOOKS
+            value: "false"
+          - name: INSECURE_REGISTRY
+            value: "true"
+          ports:
+            - containerPort: 9300
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 9300
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 50m
+              memory: 64Mi
+      
+          volumeMounts:
+          - mountPath: /data
+            name: keel-data   # must match the name of the volume
+      # Provision a fresh volume for the pod
+      volumes:
+        - name: "keel-data"
+          persistentVolumeClaim:
+            claimName: keel-data-pvc
+
+---
+# link for keel ingress
+apiVersion: v1
+kind: Service
+metadata:
+  name: keel
+  namespace: keel
+  labels:
+    app: keel
+spec:
+  selector:
+    app: keel
+  ports:
+  - port: 9300
+    protocol: TCP
+    targetPort: 9300
+    name: web

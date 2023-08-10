@@ -1,2 +1,3 @@
 # Ignore secrets 
 .secret*
+/sysdig/values.yaml

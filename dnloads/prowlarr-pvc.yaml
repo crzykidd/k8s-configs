@@ -1,0 +1,17 @@
+kind: "PersistentVolumeClaim"
+apiVersion: "v1"
+metadata:
+  name: prowlarr-data-pvc
+  namespace: dnloads  
+  annotations:
+    volume.alpha.kubernetes.io/storage-class: "longhorn"
+  labels:
+    app.kubernetes.io/part-of: dnloads
+    app.kubernetes.io/name: prowlarr
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "5Gi"
+  storageClassName: longhorn

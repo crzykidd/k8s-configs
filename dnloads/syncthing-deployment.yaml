@@ -7,6 +7,11 @@ metadata:
     app: syncthing
     app.kubernetes.io/name: syncthing
     app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
 spec:
   replicas: 1
   strategy:

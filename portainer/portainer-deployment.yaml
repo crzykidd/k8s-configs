@@ -59,6 +59,11 @@ metadata:
     app.kubernetes.io/name: portainer
     app.kubernetes.io/instance: portainer
     app: portainer-ui
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
 spec:
   replicas: 1
   strategy:
