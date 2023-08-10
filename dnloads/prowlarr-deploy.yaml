@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prowlarr
+  namespace: dnloads #added
+  labels:
+    app: prowlarr-ui
+    app.kubernetes.io/name: prowlarr
+    app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: prowlarr
+      app.kubernetes.io/part-of: dnloads
+
+  template:
+    metadata:
+      labels:
+        app: prowlarr-ui
+        app.kubernetes.io/name: prowlarr
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: prowlarr
+        image: lscr.io/linuxserver/prowlarr:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 9696
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: prowlarr-data
+          mountPath: /config
+      volumes:
+        - name: "prowlarr-data"
+          persistentVolumeClaim:
+            claimName: prowlarr-data-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prowlarr-ui
+  namespace: dnloads
+  labels:
+    app: prowlarr-ui
+spec:
+  selector:
+    app: prowlarr-ui
+  ports:
+  - port: 9696
+    protocol: TCP
+    targetPort: 9696
+    name: web

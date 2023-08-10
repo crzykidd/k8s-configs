@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prowlarr-web-ui
+  namespace: dnloads
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`prowlarr.home.arpa`) || Host(`ar-prowlarr.crzynet.com`)
+    kind: Rule
+    services:
+      - name: prowlarr-ui
+        port: 9696
