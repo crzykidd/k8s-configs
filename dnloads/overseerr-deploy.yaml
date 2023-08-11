@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: overseerr
+  namespace: dnloads #added
+  labels:
+    app: overseerr-ui
+    app.kubernetes.io/name: overseerr
+    app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: overseerr
+      app.kubernetes.io/part-of: dnloads
+
+  template:
+    metadata:
+      labels:
+        app: overseerr-ui
+        app.kubernetes.io/name: overseerr
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: overseerr
+        image: lscr.io/linuxserver/overseerr:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5055
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: overseerr-data
+          mountPath: /config
+      volumes:
+        - name: "overseerr-data"
+          persistentVolumeClaim:
+            claimName: overseerr-data-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: overseerr-ui
+  namespace: dnloads
+  labels:
+    app: overseerr-ui
+spec:
+  selector:
+    app: overseerr-ui
+  ports:
+  - port: 5055
+    protocol: TCP
+    targetPort: 5055
+    name: web

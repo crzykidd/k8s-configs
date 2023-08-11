@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: overseerr-web-ui
+  namespace: dnloads
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`overseerr.home.arpa`) || Host(`ar-os.crzynet.com`)
+    kind: Rule
+    services:
+      - name: overseerr-ui
+        port: 5055

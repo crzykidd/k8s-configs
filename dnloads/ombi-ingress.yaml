@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: ombi-web-ui
+  namespace: dnloads
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`ombi.home.arpa`) || Host(`ar-ombi.crzynet.com`)
+    kind: Rule
+    services:
+      - name: ombi-ui
+        port: 3579

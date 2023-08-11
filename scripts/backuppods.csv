@@ -1,0 +1,4 @@
+podname,namespace,backupto,backupfrom,daystokeep
+sonarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30
+radarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30
+prowlarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30
