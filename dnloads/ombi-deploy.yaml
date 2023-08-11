@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ombi
+  namespace: dnloads #added
+  labels:
+    app: ombi-ui
+    app.kubernetes.io/name: ombi
+    app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: ombi
+      app.kubernetes.io/part-of: dnloads 
+
+  template:
+    metadata:
+      labels:
+        app: ombi-ui
+        app.kubernetes.io/name: ombi
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: ombi
+        image: lscr.io/linuxserver/ombi:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort:  3579
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: ombi-data
+          mountPath: /config
+      volumes:
+        - name: "ombi-data"
+          persistentVolumeClaim:
+            claimName: ombi-data-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ombi-ui
+  namespace: dnloads
+  labels:
+    app: ombi-ui
+spec:
+  selector:
+    app: ombi-ui
+  ports:
+  - port: 3579
+    protocol: TCP
+    targetPort: 3579
+    name: web
