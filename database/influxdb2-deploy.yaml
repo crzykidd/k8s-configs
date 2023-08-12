@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: influxdb2
+  namespace: database #added
+  labels:
+    app: influxdb2
+    app.kubernetes.io/name: influxdb2
+    app.kubernetes.io/part-of: datebase  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: influxdb2
+      app.kubernetes.io/part-of: database
+
+  template:
+    metadata:
+      labels:
+        app: influxdb2
+        app.kubernetes.io/name: influxdb2
+        app.kubernetes.io/part-of: database
+    spec:
+      containers:
+      - name: influxdb2
+        image: influxdb:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8086
+
+        volumeMounts:
+        - name: influxdb2-data
+          mountPath: /var/lib/influxdb2
+        - name: influxdb2-backup
+          mountPath: /backup
+
+      volumes:
+        - name: influxdb2-data
+          persistentVolumeClaim:
+            claimName: influxdb2-data-pvc
+        - name: influxdb2-backup
+          nfs:
+            server: 192.168.55.21
+            path: /volume1/k8s-configs/backups/database/influxdb2
+        
+      
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: influxdb2
+  namespace: database
+  labels:
+    app: influxdb2
+spec:
+  selector:
+    app: influxdb2
+  ports:
+  - port: 8086
+    protocol: TCP
+    targetPort: 8086
+    name: web

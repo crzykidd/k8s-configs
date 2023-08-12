@@ -1,4 +1,6 @@
-podname,namespace,backupto,backupfrom,daystokeep
-sonarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30
-radarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30
-prowlarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30
+podname,namespace,backupto,backupfrom,daystokeep,jobtype
+sonarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30,directory
+radarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30,directory
+prowlarr-ui,dnloads,/mnt/k8s-configs/backups/dnloads,/config,30,directory
+influxdb2,database,/mnt/k8s-configs/backups/database,DB,30,influxdb2
+NONE,NONE,/mnt/k8s-configs/backups/k3s_config,/var/lib/rancher/k3s/server,30,k3s_config
