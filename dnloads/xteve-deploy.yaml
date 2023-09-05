@@ -96,24 +96,3 @@ spec:
     targetPort: 34400
     name: web
 
----
-# link for NodePort
-#apiVersion: v1
-#kind: Service
-#metadata:
-#  name: syncthing-np
-#  namespace: dnloads
-#  labels:
-#    app: syncthing-np
-#spec:
-#  selector:
-#    app: syncthing-np
-#  ports:
-#  - port: 32222
-#    protocol: TCP
-#    targetPort: 32222
-#    name: tcp-edge
-#  - port: 32222
-#    protocol: UDP
-#    targetPort: 32222
-#    name: udp-edge    
