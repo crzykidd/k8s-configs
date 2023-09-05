@@ -1,11 +1,20 @@
 #! /bin/bash
 
+another_instance()
+{
+    echo "There is another instance running, exiting"
+    exit 1
+}
+if [ "$(pgrep backuppods.sh)" != $$ ]; then
+     another_instance
+fi
+
 # Function to backup files only  type=directory
 backup_directory (){
   getcontainername=$(kubectl get pods -lapp=$podname -n $namespace --output jsonpath='{.items[0].metadata.name}')
   #echo "getcontainername: $getcontainername"
   kubectl cp $getcontainername:$backupfrom $backupto/$podname/$current_time/ -n $namespace
-  find $backupto/$podname/* -maxdepth 0  -type d -ctime +$daystokeep -exec echo {} \;  
+  find $backupto/$podname/* -maxdepth 0  -type d -ctime +$daystokeep -exec rm -r {} \;  
   totalseconds=`echo $SECONDS`
   lastjobseconds=$((totalseconds-totaljobseconds))
   totaljobseconds=$((totaljobseconds+lastjobseconds))
@@ -15,7 +24,7 @@ backup_directory (){
 
 backup_influxdb2 (){
   getcontainername=$(kubectl get pods -lapp=$podname -n $namespace --output jsonpath='{.items[0].metadata.name}')
-  kubectl exec --namespace=$namespace $getcontainername -- influx backup $backupto/$current_time -t $influxdbtoken
+  kubectl exec --namespace=$namespace $getcontainername -- influx backup /backup/$current_time -t $influxdbtoken
   find $backupto/$podname/* -maxdepth 0  -type d -ctime +$daystokeep -exec echo {} \;  
   totalseconds=`echo $SECONDS`
   lastjobseconds=$((totalseconds-totaljobseconds))
@@ -26,6 +35,7 @@ backup_influxdb2 (){
 backup_k3sconfig (){
   
   echo "Start k3 backup"
+  
   rsync -rlptDvLcp $backupfrom/ $backupto/$current_time/
   echo "end k3 backup"
   find $backupto/* -maxdepth 0  -type d -ctime +$daystokeep -exec echo {} \;  
@@ -38,11 +48,12 @@ backup_k3sconfig (){
 
 current_time=$(date +"%Y%m%d-%H")
 yqPath="/home/linuxbrew/.linuxbrew/bin"
+homepath="/mnt/k8s-configs/k8s-configs/scripts"
 # Cleanup file for csv
 # Get URL from Secrets file
-url=$($yqPath/yq .backuppods.discordUrlBackup .secret-scripts.yaml)
-influxdbtoken=$($yqPath/yq .backuppods.influxdbtoken .secret-scripts.yaml)
-filecontents=$(sed '1d;s/.$//' backuppods.csv)
+url=$($yqPath/yq .backuppods.discordUrlBackup $homepath/.secret-scripts.yaml)
+influxdbtoken=$($yqPath/yq .backuppods.influxdbtoken $homepath/.secret-scripts.yaml)
+filecontents=$(sed '1d;s/.$//' $homepath/backuppods.csv)
 lastjobseconds=0
 totaljobseconds=0
 message="Backup of k8s cluster containers started \\n"

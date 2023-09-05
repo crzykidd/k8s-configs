@@ -1,0 +1,59 @@
+#
+# IMPORTANT NOTE
+#
+# This chart inherits from our common library chart. You can check the default values/options here:
+# https://github.com/k8s-at-home/library-charts/tree/main/charts/stable/common/values.yaml
+#
+
+global:
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 4h"
+    keel.sh/approvals: "1"
+    keel.sh/approvalDeadline: "720"
+
+image:
+  # -- image repository
+  repository: esphome/esphome
+  # -- image pull policy
+  pullPolicy: IfNotPresent
+  # -- image tag
+  tag: latest
+
+# -- environment variables.
+# @default -- See below
+env:
+  ESPHOME_DASHBOARD_USE_PING: true
+  # ESPHOME_DASHBOARD_RELATIVE_URL: "/"
+  # ESPHOME_QUICKWIZARD:
+  # ESPHOME_IS_HASSIO:
+  # DISABLE_HA_AUTHENTICATION:
+  # USERNAME:
+  # PASSWORD:
+  TZ: "America/Los_Angeles"
+
+# -- Configures service settings for the chart.
+# @default -- See values.yaml
+service:
+  main:
+    ports:
+      http:
+        port: 6052
+
+ingress:
+  # -- Enable and configure ingress settings for the chart under this key.
+  # @default -- See values.yaml
+  main:
+    enabled: false
+
+# -- Configure persistence settings for the chart under this key.
+# @default -- See values.yaml
+persistence:
+  config:
+    enabled: true
+    retain: true
+    storageClass: "nfs-fs01-k8sconfig-data-esphome"
+    accessMode: ReadWriteOnce
+    size: 10Gi    
+

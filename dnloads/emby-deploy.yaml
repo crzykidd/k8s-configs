@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: emby
+  labels:
+    run: emby
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8096
+    protocol: TCP
+    targetPort: 8096
+    name: http
+  - port: 8920
+    protocol: TCP
+    targetPort: 8920
+    name: https
+  selector:
+    run: emby
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emby
+  namespace: dnloads
+  labels:
+    app: emby
+    app.kubernetes.io/name: emby
+    app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: emby
+      app.kubernetes.io/part-of: dnloads
+  template:
+    metadata:
+      labels:
+        app: emby
+        app.kubernetes.io/name: emby
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: emby
+        image: emby/embyserver:latest
+        ports:
+        - containerPort: 8096
+        - containerPort: 8920
+        volumeMounts:
+        - name: emby-config
+          mountPath: /config
+        - name: emby-fs02-media  
+          mountPath: /mnt/fs02-media
+        - name: emby-tnas01-media
+          mountPath: /mnt/tnas01-media
+          
+      volumes:
+      - name: emby-config
+        persistentVolumeClaim:
+          claimName: emby-config-pvc
+      - name: emby-fs02-media
+        nfs:
+          server: 192.168.55.22
+          path: /volume1/media
+      - name: emby-tnas01-media
+        nfs:
+          server: 192.168.55.24
+          path: /mnt/Raid01/media          
+        
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emby
+  namespace: dnloads
+  labels:
+    app: emby
+spec:
+  selector:
+    app: emby
+  ports:
+  - port: 8096
+    protocol: TCP
+    targetPort: 8096
+    name: web

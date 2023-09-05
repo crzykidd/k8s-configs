@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: emby-web-ui
+  namespace: dnloads
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`emby.home.arpa`) || Host(`ar-emby.crzynet.com`)
+    kind: Rule
+    services:
+      - name: emby
+        port: 8096

@@ -1,0 +1,119 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: xteve
+  namespace: dnloads #added
+  labels:
+    app: xteve
+    app.kubernetes.io/name: xteve
+    app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: xteve
+      app.kubernetes.io/part-of: dnloads
+
+  template:
+    metadata:
+      labels:
+        app: xteve
+        app.kubernetes.io/name: xteve
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: xteve
+        image: alturismo/xteve_g2g_owi:latest
+        imagePullPolicy: Always
+        ports:
+        - name: web-ui
+          containerPort: 34400
+        - name: sycnthing-tcp
+          containerPort: 9000
+          protocol: TCP
+        #- name: syncthing-udp
+        #  containerPort: 32222
+        #  protocol: UDP
+        env:
+        - name: TZ
+          value: America/Los_Angeles
+        volumeMounts:
+        #- name: syncthing-data
+        #  mountPath: /config
+        - name: xteve-config
+          mountPath: /config 
+        - name: xteve-root
+          mountPath: /root/.xteve 
+        - name: xteve-tmp
+          mountPath: /tmp/xteve
+        - name: xteve-guide2go
+          mountPath: /guide2go
+        - name: xteve-owi2plex
+          mountPath: /owi2plex  
+      volumes:
+        - name: "xteve-config"
+          nfs:
+            server: 192.168.55.21
+            path: /volume1/k8s-configs/data/dnloads/xteve/config
+        - name: "xteve-root"
+          nfs:
+            server: 192.168.55.21
+            path: /volume1/k8s-configs/data/dnloads/xteve/root
+        - name: "xteve-tmp"
+          nfs:
+            server: 192.168.55.21
+            path: /volume1/k8s-configs/data/dnloads/xteve/tmp
+        - name: "xteve-guide2go"
+          nfs:
+            server: 192.168.55.21
+            path: /volume1/k8s-configs/data/dnloads/xteve/guide2go
+        - name: "xteve-owi2plex"
+          nfs:
+            server: 192.168.55.21
+            path: /volume1/k8s-configs/data/dnloads/xteve/owi2plex   
+---
+# link for traefik ingress
+apiVersion: v1
+kind: Service
+metadata:
+  name: xteve
+  namespace: dnloads
+  labels:
+    app: xteve
+spec:
+  selector:
+    app: xteve
+  ports:
+  - port: 34400
+    protocol: TCP
+    targetPort: 34400
+    name: web
+
+---
+# link for NodePort
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: syncthing-np
+#  namespace: dnloads
+#  labels:
+#    app: syncthing-np
+#spec:
+#  selector:
+#    app: syncthing-np
+#  ports:
+#  - port: 32222
+#    protocol: TCP
+#    targetPort: 32222
+#    name: tcp-edge
+#  - port: 32222
+#    protocol: UDP
+#    targetPort: 32222
+#    name: udp-edge    
