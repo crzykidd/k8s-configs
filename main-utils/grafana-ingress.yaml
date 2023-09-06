@@ -1,0 +1,27 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana
+  namespace: main-utils
+  labels:
+    app.kubernetes.io/name: grafana
+  annotations:
+    gethomepage.dev/href: "http://grafana.home.arpa"
+    gethomepage.dev/enabled: "true"
+    gethomepage.dev/description: Grafana-1
+    gethomepage.dev/group: IPMI
+    gethomepage.dev/icon: grafana.png
+    gethomepage.dev/name: Grafana-1
+    #gethomepage.dev/widget.type: "emby"
+    #gethomepage.dev/widget.url: "https://emby.example.com"
+    #gethomepage.dev/podSelector: ""
+    #gethomepage.dev/weight: 10 # optional  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`grafana.home.arpa`)
+    kind: Rule
+    services:
+      - name: grafana
+        port: 3000
