@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: phpmyadmin
+  namespace: database
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`phpmyadmin.home.arpa`)
+    kind: Rule
+    services:
+      - name: phpmyadmin
+        port: 80
