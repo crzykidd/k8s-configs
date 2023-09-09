@@ -1,0 +1,4 @@
+
+additionalArguments:
+  - "--entryPoints.mariadb.address=:3306/tcp"
+  

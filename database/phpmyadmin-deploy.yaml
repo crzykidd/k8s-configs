@@ -29,7 +29,7 @@ spec:
             - containerPort: 80
           env:
             - name: PMA_HOST
-              value: docker10
+              value: mariadb01.home.arpa
             - name: PMA_PORT
               value: "3306"
             - name: MYSQL_ROOT_PASSWORD

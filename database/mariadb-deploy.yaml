@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mariadb
+  namespace: database
+  labels:
+    app: mariadb
+spec:
+  ports:
+    - port: 3306
+  selector:
+    app: mariadb
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mariadb
+  namespace: database
+  labels:
+    app: mariadb
+spec:
+  selector:
+    matchLabels:
+      app: mariadb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mariadb
+    spec:
+      containers:
+      - image: mariadb:latest
+        name: mariadb
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mariadb-pass
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mariadb
+          hostPort: 3306
+          protocol: TCP
+        volumeMounts:
+        - name: mariadb-data
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mariadb-data
+        persistentVolumeClaim:
+          claimName: mariadb-data-pvc
