@@ -5,6 +5,12 @@ metadata:
   namespace: database
   labels:
     app: mariadb
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 4h"
+    keel.sh/approvals: "1"
+    keel.sh/approvalDeadline: "720"        
 spec:
   ports:
     - port: 3306
