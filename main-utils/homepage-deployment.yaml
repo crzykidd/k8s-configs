@@ -49,6 +49,8 @@ spec:
           nfs:
             server: 192.168.55.21
             path: /volume1/k8s-configs/data/main-utils/homepage-config
+      nodeSelector:
+        deployMain-Utils: active             
 #        - name: config-volume
 #          configMap:
 #            name: homepage

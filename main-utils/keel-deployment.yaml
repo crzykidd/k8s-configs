@@ -52,11 +52,12 @@ spec:
             requests:
               cpu: 50m
               memory: 64Mi
-      
           volumeMounts:
           - mountPath: /data
             name: keel-data   # must match the name of the volume
       # Provision a fresh volume for the pod
+      nodeSelector:
+        deployMain-Utils: active        
       volumes:
         - name: "keel-data"
           persistentVolumeClaim:

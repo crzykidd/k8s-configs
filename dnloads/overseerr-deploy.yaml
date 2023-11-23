@@ -43,6 +43,8 @@ spec:
         volumeMounts:
         - name: overseerr-data
           mountPath: /config
+      nodeSelector:
+        deployDnloads: active
       volumes:
         - name: "overseerr-data"
           persistentVolumeClaim:

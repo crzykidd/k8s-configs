@@ -37,6 +37,8 @@ spec:
                 secretKeyRef:
                   name: mysql-secrets
                   key: root-password
+      nodeSelector:
+        deployDatabase: active    
 
 ---
 apiVersion: v1

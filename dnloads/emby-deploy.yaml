@@ -61,7 +61,8 @@ spec:
           mountPath: /mnt/fs02-media
         - name: emby-tnas01-media
           mountPath: /mnt/tnas01-media
-          
+      nodeSelector:
+        deployDnloads: active        
       volumes:
       - name: emby-config
         persistentVolumeClaim:
@@ -92,3 +93,4 @@ spec:
     protocol: TCP
     targetPort: 8096
     name: web
+

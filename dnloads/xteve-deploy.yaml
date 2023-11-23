@@ -57,6 +57,8 @@ spec:
           mountPath: /guide2go
         - name: xteve-owi2plex
           mountPath: /owi2plex  
+      nodeSelector:
+        deployDnloads: active     
       volumes:
         - name: "xteve-config"
           nfs:

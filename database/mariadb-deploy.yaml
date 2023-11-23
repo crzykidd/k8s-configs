@@ -53,6 +53,8 @@ spec:
         volumeMounts:
         - name: mariadb-data
           mountPath: /var/lib/mysql
+      nodeSelector:
+        deployDatabase: active    
       volumes:
       - name: mariadb-data
         persistentVolumeClaim:

@@ -46,7 +46,8 @@ spec:
           mountPath: /config
         - name: sonarr-fs02-media
           mountPath: /mnt/fs02-media  
-
+      nodeSelector:
+        deployDnloads: active
       volumes:
         - name: "sonarr-data"
           persistentVolumeClaim:

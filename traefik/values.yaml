@@ -2,3 +2,7 @@
 additionalArguments:
   - "--entryPoints.mariadb.address=:3306/tcp"
   
+
+spec:
+  nodeSelector:
+    deployMain-Utils: active   

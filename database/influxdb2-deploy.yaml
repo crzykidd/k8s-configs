@@ -41,6 +41,8 @@ spec:
           mountPath: /var/lib/influxdb2
         - name: influxdb2-backup
           mountPath: /backup
+      nodeSelector:
+        deployDatabase: active            
 
       volumes:
         - name: influxdb2-data

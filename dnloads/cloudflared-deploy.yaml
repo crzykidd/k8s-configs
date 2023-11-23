@@ -29,4 +29,6 @@ spec:
         - run
         - --token
         - <ENTER TOKEN>
+      nodeSelector:
+        deployDnloads: active
 

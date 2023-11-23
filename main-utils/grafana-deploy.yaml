@@ -58,6 +58,8 @@ spec:
           volumeMounts:
             - name: grafana-data
               mountPath: /var/lib/grafana         
+      nodeSelector:
+        deployMain-Utils: active  
       volumes:
         - name: grafana-data
           nfs:

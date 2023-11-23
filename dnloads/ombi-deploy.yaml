@@ -43,6 +43,8 @@ spec:
         volumeMounts:
         - name: ombi-data
           mountPath: /config
+      nodeSelector:
+        deployDnloads: active          
       volumes:
         - name: "ombi-data"
           persistentVolumeClaim:

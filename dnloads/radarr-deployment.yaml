@@ -47,7 +47,8 @@ spec:
           mountPath: /mnt/fs02-media  
         - name: radarr-tnas01-media
           mountPath: /mnt/tnas01-media
-
+      nodeSelector:
+        deployDnloads: active
       volumes:
         - name: "radarr-data"
           persistentVolumeClaim:
