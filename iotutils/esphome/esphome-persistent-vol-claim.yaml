@@ -1,0 +1,14 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: esphome-config-volume
+  namespace: iotutils
+#  annotations:
+#    nfs.io/storage-path: "esphome-config" # not required, depending on whether this annotation was shown in the storage class description
+spec:
+  storageClassName: fs01-k8sconfigs-data-esphome
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 10Gi
