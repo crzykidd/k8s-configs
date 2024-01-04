@@ -1,0 +1,75 @@
+  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kavita
+  namespace: dnloads #added
+  labels:
+    app: kavita-ui
+    app.kubernetes.io/name: kavita
+    app.kubernetes.io/part-of: dnloads  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 4h"
+    keel.sh/approvals: "1"
+    keel.sh/approvalDeadline: "720" 
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: kavita
+      app.kubernetes.io/part-of: dnloads
+
+  template:
+    metadata:
+      labels:
+        app: kavita-ui
+        app.kubernetes.io/name: kavita
+        app.kubernetes.io/part-of: dnloads
+    spec:
+      containers:
+      - name: kavita
+        image: lscr.io/linuxserver/kavita:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        env:
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: kavita-data
+          mountPath: /kavita/config
+        - name: kavita-fs02-media
+          mountPath: /mnt/fs02-media  
+      nodeSelector:
+        deployDnloads: active
+      volumes:
+        - name: "kavita-data"
+          persistentVolumeClaim:
+            claimName: kavita-data-pvc
+        - name: kavita-fs02-media
+          nfs:
+            server: 192.168.55.22
+            path: /volume1/media
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kavita-ui
+  namespace: dnloads
+  labels:
+    app: kavita-ui
+spec:
+  selector:
+    app: kavita-ui
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+    name: web

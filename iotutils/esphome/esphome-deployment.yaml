@@ -4,6 +4,13 @@ metadata:
   annotations:
   name: esphome
   namespace: iotutils
+  
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 4h"
+    keel.sh/approvals: "1"
+    keel.sh/approvalDeadline: "720"   
 spec:
   replicas: 1
   selector:
@@ -23,6 +30,9 @@ spec:
         env:
         - name: TZ
           value: "America/Los_Angeles"
+        - name: ESPHOME_DASHBOARD_USE_PING
+          value: "true"
+
         image: esphome/esphome:latest
         imagePullPolicy: Always
         ports:

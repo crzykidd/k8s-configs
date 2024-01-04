@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kavita-web-ui
+  namespace: dnloads
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`kavita.home.arpa`) || Host(`ar-kavita.crzynet.com`)
+    kind: Rule
+    services:
+      - name: kavita-ui
+        port: 5000
