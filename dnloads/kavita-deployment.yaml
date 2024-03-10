@@ -43,7 +43,7 @@ spec:
           value: "1000"
         volumeMounts:
         - name: kavita-data
-          mountPath: /kavita/config
+          mountPath: /config
         - name: kavita-fs02-media
           mountPath: /mnt/fs02-media  
       nodeSelector:
