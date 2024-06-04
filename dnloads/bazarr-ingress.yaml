@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr-web-ui
+  namespace: dnloads
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`bazarr.home.arpa`) || Host(`ar-bazarr.crzynet.com`)
+    kind: Rule
+    services:
+      - name: bazarr-ui
+        port: 6767

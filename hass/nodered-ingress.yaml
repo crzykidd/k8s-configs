@@ -1,0 +1,16 @@
+
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nodered-web-ui
+  namespace: hass
+  
+spec:
+  entryPoints:
+    - web
+  routes:
+  - match: Host(`nodered.home.arpa`)
+    kind: Rule
+    services:
+      - name: nodered-ui
+        port: 1880 

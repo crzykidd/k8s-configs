@@ -1,12 +1,11 @@
-  
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: sonarr
+  name: bazarr
   namespace: dnloads #added
   labels:
-    app: sonarr-ui
-    app.kubernetes.io/name: sonarr
+    app: bazarr-ui
+    app.kubernetes.io/name: bazarr
     app.kubernetes.io/part-of: dnloads  
   annotations:
     keel.sh/policy: major
@@ -20,61 +19,64 @@ spec:
     type: "Recreate"
   selector:
     matchLabels: 
-      app.kubernetes.io/name: sonarr
+      app.kubernetes.io/name: bazarr
       app.kubernetes.io/part-of: dnloads
 
   template:
     metadata:
       labels:
-        app: sonarr-ui
-        app.kubernetes.io/name: sonarr
+        app: bazarr-ui
+        app.kubernetes.io/name: bazarr
         app.kubernetes.io/part-of: dnloads
     spec:
       containers:
-      - name: sonarr
-        image: lscr.io/linuxserver/sonarr:latest
+      - name: bazarr
+        image: lscr.io/linuxserver/bazarr:latest
         imagePullPolicy: Always
         ports:
-        - containerPort: 8989
+        - containerPort: 6767
         env:
         - name: PGID
           value: "1000"
         - name: PUID
           value: "1000"
         volumeMounts:
-        - name: sonarr-data
+        - name: bazarr-data
           mountPath: /config
-        - name: sonarr-fs02-media
+        - name: bazarr-fs02-media
           mountPath: /mnt/fs02-media  
-        - name: sonarr-tnas01-media
+        - name: bazarr-tnas01-media
           mountPath: /mnt/tnas01-media          
       nodeSelector:
         deployDnloads: active
       volumes:
-        - name: "sonarr-data"
+        - name: "bazarr-data"
           persistentVolumeClaim:
-            claimName: sonarr-data-pvc
-        - name: sonarr-fs02-media
+            claimName: bazarr-data-pvc
+        - name: bazarr-fs02-media
           nfs:
             server: 192.168.55.22
             path: /volume1/media
-        - name: sonarr-tnas01-media
+        - name: bazarr-tnas01-media
           nfs:
             server: 192.168.55.24
-            path: /mnt/Raid01/media
+            path: /mnt/Raid01/media            
+
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: sonarr-ui
+  name: bazarr-ui
   namespace: dnloads
   labels:
-    app: sonarr-ui
+    app: bazarr-ui
 spec:
   selector:
-    app: sonarr-ui
+    app: bazarr-ui
   ports:
-  - port: 8989
+  - port: 6767
     protocol: TCP
-    targetPort: 8989
+    targetPort: 6767
     name: web
+
+

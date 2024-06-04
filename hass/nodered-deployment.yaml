@@ -1,0 +1,72 @@
+  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodered
+  namespace: hass #added
+  labels:
+    app: nodered-ui
+    app.kubernetes.io/name: nodered
+    app.kubernetes.io/part-of: hass
+  annotations:
+    keel.sh/policy: major
+    keel.sh/trigger: poll      
+    keel.sh/pollSchedule: "@every 1h"
+    keel.sh/approvals: "1"
+    keel.sh/approvalDeadline: "720" 
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels: 
+      app.kubernetes.io/name: nodered
+      app.kubernetes.io/part-of: hass
+
+  template:
+    metadata:
+      labels:
+        app: nodered-ui
+        app.kubernetes.io/name: nodered
+        app.kubernetes.io/part-of: hass
+    spec:
+      containers:
+      - name: nodered
+        image: nodered/node-red:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 1880
+        env:
+        - name: TZ
+          value: "America/Los_Angeles"
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        volumeMounts:
+        - name: nodered-data
+          mountPath: /data 
+        
+      volumes:
+        - name: "nodered-data"
+          nfs:
+            server: 192.168.55.21
+            path: /volume1/k8s-configs/data/hass/nodered/data
+
+        
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodered-ui
+  namespace: hass
+  labels:
+    app: nodered-ui
+spec:
+  selector:
+    app: nodered-ui
+  ports:
+  - port: 1880
+    protocol: TCP
+    targetPort: 1880
+    name: web
